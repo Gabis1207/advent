@@ -10,7 +10,7 @@ namespace advent
 		{
 			//name of day and challenge to run here
 			//eg Day1.Challenge1();
-			Day1.Challenge2();
+			Day2.Challenge1();
 		}
 	}
 }
