@@ -26,6 +26,26 @@ namespace advent
 			}
 		}
 
+		public static void Challenge2()
+		{
+			int passing = 0;
+			var expression = new Regex(@"(\d*)-(\d*)\s(\w):\s(\w*)");
+			foreach (var item in input)
+			{
+				Match match = expression.Match(item);
+
+				int lowerBound = int.Parse(match.Groups[1].Value)-1;
+				int upperBound = int.Parse(match.Groups[2].Value)-1;
+				var letter = match.Groups[3].Value.First();
+				var password = match.Groups[4].Value;
+				
+				if (password[lowerBound] == letter ^ password[upperBound] == letter)
+				{
+					passing++;
+				}
+			}
+		}
+
 		public static List<string> input = new List<string>() { "4-6 b: bbbdbtbbbj",
 			"1-6 g: ggvggbgggstg",
 			"1-4 s: lssss",
