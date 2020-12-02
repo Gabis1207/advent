@@ -8,45 +8,34 @@ namespace advent
 	{
 		public static void Challenge1()
 		{
-			int passing = 0;
-			var expression = new Regex(@"(\d*)-(\d*)\s(\w):\s(\w*)");
-			foreach (var item in input)
+			foreach (var i in d)
 			{
-				Match match = expression.Match(item);
-
-				int lowerBound = int.Parse(match.Groups[1].Value);
-				int upperBound = int.Parse(match.Groups[2].Value);
-				var letter = match.Groups[3].Value.First();
-				var password = match.Groups[4].Value;
-				int charCount = password.Length - password.Where(x => x != letter).Count();
-				if (charCount >= lowerBound && charCount <= upperBound)
+				g(e.Match(i), out int lb, out int ub, out char l, out string pw);
+				int c = pw.Length - pw.Where(x => x != l).Count();
+				if (c >= lb && c <= ub)
 				{
-					passing++;
+					p++;
 				}
 			}
 		}
-
 		public static void Challenge2()
 		{
-			int passing = 0;
-			var expression = new Regex(@"(\d*)-(\d*)\s(\w):\s(\w*)");
-			foreach (var item in input)
+			foreach (var i in d)
 			{
-				Match match = expression.Match(item);
-
-				int lowerBound = int.Parse(match.Groups[1].Value)-1;
-				int upperBound = int.Parse(match.Groups[2].Value)-1;
-				var letter = match.Groups[3].Value.First();
-				var password = match.Groups[4].Value;
-				
-				if (password[lowerBound] == letter ^ password[upperBound] == letter)
-				{
-					passing++;
-				}
+				g(e.Match(i), out int lb, out int ub, out char l, out string pw);
+				p = (pw[lb] == l ^ pw[ub] == l) ? p++ : p;
 			}
 		}
-
-		public static List<string> input = new List<string>() { "4-6 b: bbbdbtbbbj",
+		private static void g(Match m, out int lb, out int ub, out char l, out string pw)
+		{
+			lb = int.Parse(m.Groups[1].Value);
+			ub = int.Parse(m.Groups[2].Value);
+			l = m.Groups[3].Value.First();
+			pw = m.Groups[4].Value;
+		}
+		public static Regex e = new Regex(@"(\d*)-(\d*)\s(\w):\s(\w*)");
+		public static int p = 0;
+		public static List<string> d = new List<string>() { "4-6 b: bbbdbtbbbj",
 			"1-6 g: ggvggbgggstg",
 			"1-4 s: lssss",
 			"13-14 v: hvvcvvvvvvvvvsvvv",
