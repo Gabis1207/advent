@@ -15,7 +15,7 @@ namespace advent
                 MatchCollection test = pattern.Matches(item);
                 bool isValid = false;
                 
-                if (test.Count == 8 || (test.Count==7 && !test.Any(x => x.Value == "cid")))
+                if (test.Count == 8 || (test.Count==7 && !test.Any(x => x.Value.StartsWith("cid"))))
                 {
                     isValid = true;
                 }
@@ -27,8 +27,105 @@ namespace advent
             }    
         }
 
+        public static void Challenge2() 
+        {
+
+            static bool IsInRange(int input, int[] bounds) 
+            {
+                return input >= bounds[0] && input <= bounds[1];
+            }
+
+            string[] eclRange = { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
+
+            foreach (string identValue in input)
+            {
+                MatchCollection test = pattern.Matches(identValue);
+                bool isValid = true;
+
+                foreach (Match item in test)
+                {
+                    try
+                    {
+                        int[] bounds = null;
+                        Match kvp = kvpExtractPattern.Match(item.Value);
+
+                        if (kvp.Groups[1].Value == "hgt")
+                        {
+                            if (kvp.Groups[2].Value.EndsWith("cm"))
+                            {
+                                bounds = new int[] { 150, 193 };
+                            }
+                            else
+                            {
+                                bounds = new int[] { 59, 76 };
+                            }
+
+                            int strlen = kvp.Groups[2].Value.Length;
+                            if (!IsInRange(int.Parse(kvp.Groups[2].Value.Substring(0,strlen-2)), bounds))
+                            {
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        else if (kvp.Groups[1].Value == "ecl")
+                        {
+                            if (!eclRange.Contains(kvp.Groups[2].Value))
+                            {
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        else if (kvp.Groups[1].Value == "pid")
+                        {
+                            int val = int.Parse(kvp.Groups[2].Value);
+                            if (kvp.Groups[2].Value.Length != 9)
+                            {
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        else if (kvp.Groups[1].Value == "hcl")
+                        {
+                            if (!Regex.IsMatch(kvp.Groups[2].Value, @"#[0-9a-f]{6}"))
+                            {
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            bounds = kvp.Groups[1].Value switch
+                            {
+                                "byr" => new int[] { 1920, 2002 },
+                                "iyr" => new int[] { 2010, 2020 },
+                                "eyr" => new int[] { 2020, 2030 },
+                                "cid" => new int[] { 000, 999 }
+                            };
+
+                            if (!IsInRange(int.Parse(kvp.Groups[2].Value), bounds))
+                            {
+                                isValid = false;
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if (isValid && (test.Count == 8 || (test.Count == 7 && !test.Any(x => x.Value.StartsWith("cid")))))
+                {
+                    validPassportCount++;
+                }
+            }
+        }
+
         public static int validPassportCount = 0;
-        public static readonly Regex pattern = new Regex(@"(byr)|(iyr)|(eyr)|(hgt)|(hcl)|(ecl)|(pid)|(cid)");
+        public static readonly Regex pattern = new Regex(@"((byr)|(iyr)|(eyr)|(hgt)|(hcl)|(ecl)|(pid)|(cid)):.*?(?=\s|$)");
+        public static readonly Regex kvpExtractPattern = new Regex(@"(...):(.*?)(?=\s|$)");
         public static readonly List<string> input = new List<string>() 
         {
             "eyr:2021 hgt:168cm hcl:#fffffd pid:180778832 byr:1923 ecl:amb iyr:2019 cid:241  ",
