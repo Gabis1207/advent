@@ -9,50 +9,75 @@ namespace advent
             int highestID = 0;
             foreach (var item in input)
             {
-                int lowerBoundRow = 0;
-                int upperBoundRow = 127;
-                int lowerBoundCol = 0;
-                int upperBoundCol = 7;
-                int stepSizeRow = 64;
-                int stepSizeCol = 4;
-                int idx = 0;
+                int seatID = GetSeatID(item);
 
-                while(idx < item.Length)
-                {
-                    if (item[idx] == 'F')
-                    {
-                        upperBoundRow -= stepSizeRow;
-                    }
-                    else if (item[idx] == 'B')
-                    {
-                        lowerBoundRow += stepSizeRow;
-                    }
-                    else if (item[idx] == 'L')
-                    {
-                        upperBoundCol -= stepSizeCol;
-                    }
-                    else
-                    {
-                        //R
-                        lowerBoundCol += stepSizeCol;
-                    }
-
-                    if (idx < 7)
-                    {
-                        stepSizeRow /= 2;
-                    }
-                    else
-                    {
-                        stepSizeCol /= 2;
-                    }
-                    idx++;
-                }
-                int seatID = (lowerBoundRow * 8) + lowerBoundCol;
                 if (seatID > highestID)
                 {
                     highestID = seatID;
                 }
             }
+        }
+
+        public static void Challenge2()
+        {
+            List<int> takenSeats = new List<int>();
+            foreach (var item in input)
+            {
+                takenSeats.Add(GetSeatID(item));
+            }
+            takenSeats.Sort();
+            int openSeat = 0;
+            for (int i = 0; i < takenSeats.Count-1; i++)
+            {
+                int item = takenSeats[i];
+                if (takenSeats[i+1] != takenSeats[i]+1)
+                {
+                    openSeat = takenSeats[i] + 1;
+                }
+            }
+        }
+
+        static int GetSeatID(string seatCode) 
+        {
+            int lowerBoundRow = 0;
+            int upperBoundRow = 127;
+            int lowerBoundCol = 0;
+            int upperBoundCol = 7;
+            int stepSizeRow = 64;
+            int stepSizeCol = 4;
+            int idx = 0;
+
+            while (idx < seatCode.Length)
+            {
+                if (seatCode[idx] == 'F')
+                {
+                    upperBoundRow -= stepSizeRow;
+                }
+                else if (seatCode[idx] == 'B')
+                {
+                    lowerBoundRow += stepSizeRow;
+                }
+                else if (seatCode[idx] == 'L')
+                {
+                    upperBoundCol -= stepSizeCol;
+                }
+                else
+                {
+                    //R
+                    lowerBoundCol += stepSizeCol;
+                }
+
+                if (idx < 7)
+                {
+                    stepSizeRow /= 2;
+                }
+                else
+                {
+                    stepSizeCol /= 2;
+                }
+                idx++;
+            }
+            return (lowerBoundRow * 8) + lowerBoundCol;
         }
 
         static readonly List<string> input = new List<string>()
