@@ -1,13 +1,11 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace advent
 {
     public static class Day6
     {
-        public static void Challenge1() 
+        public static void Challenge1()
         {
             int customsAnswersSum = 0;
             List<char> groupAnswers = new List<char>();
@@ -26,6 +24,29 @@ namespace advent
             }
         }
 
+        public static void Challenge2()
+        {
+            int customsAnswersSum = 0;
+            List<List<char>> groupAnswers = new List<List<char>>();
+            foreach (string item in input)
+            {
+                if (!string.IsNullOrEmpty(item))
+                {
+                    groupAnswers.Add(item.ToCharArray().ToList());
+                }
+                else
+                {
+                    List<char> allSameAnswers = groupAnswers.First();
+                    for (int i = 1; i < groupAnswers.Count; i++)
+                    {
+                        allSameAnswers = allSameAnswers.Intersect(groupAnswers[i]).ToList();
+                    }
+                    allSameAnswers.Sort();
+                    customsAnswersSum += allSameAnswers.Distinct().Count();
+                    groupAnswers.Clear();
+                }
+            }
+        }
 
         public static List<string> input = new List<string>()
         {
@@ -2226,6 +2247,6 @@ namespace advent
             "lpjafmzv",
             "" //must add group separator after last group's answers
         };
-    
+
     }
 }
