@@ -9,6 +9,20 @@ namespace advent
     {
         public static void Challenge1()
         {
+            init();
+            ColorModifier search = new ColorModifier(ColorModifier.Color.gold, ColorModifier.Modifier.shiny);
+            int canContain = Bag.KnownBags.Where(x => x.CanEventuallyContain(search)).Count();
+        }
+
+        public static void Challenge2() 
+        {
+            init();
+            ColorModifier search = new ColorModifier(ColorModifier.Color.gold, ColorModifier.Modifier.shiny);
+            int canContain = Bag.KnownBags.Find(x => x.Description.Equals(search)).MustContainCount();
+        }
+
+        public static void init() 
+        {
             foreach (string rule in input)
             {
                 Match identifier = BagIdentifier.Match(rule);
@@ -18,8 +32,6 @@ namespace advent
 
                 Bag.KnownBags.Add(currentBag);
             }
-            ColorModifier search = new ColorModifier(ColorModifier.Color.gold, ColorModifier.Modifier.shiny);
-            int canContain = Bag.KnownBags.Where(x => x.CanEventuallyContain(search)).Count();
         }
 
         internal class Bag 
@@ -76,6 +88,17 @@ namespace advent
                     }
                     return canAnyContain;
                 }
+            }
+
+            public int MustContainCount() 
+            {
+                int mustContain = AllowedContents.Sum(x=>x.Value);
+                foreach (ColorModifier colorMod in AllowedContents.Keys)
+                {
+                    Bag nextSearch = KnownBags.Find(x => x.Description.Equals(colorMod));
+                    mustContain += (nextSearch.MustContainCount() * AllowedContents[colorMod]);
+                }
+                return mustContain;
             }
         }
 
