@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -13,18 +14,6 @@ namespace advent
 			int currentIndex = 0;
 			List<int> visitedInicies = new List<int>();
 
-			List<string> test = new List<string>() {
-				"nop +0",
-				"acc +1",
-				"jmp +4",
-				"acc +3",
-				"jmp -3",
-				"acc -99",
-				"acc +1",
-				"jmp -4",
-				"acc +6", 
-			};
-
             while (!visitedInicies.Contains(currentIndex))
             {
 				string instruction = input[currentIndex];
@@ -33,8 +22,6 @@ namespace advent
 				if (instruction.StartsWith("nop", StringComparison.CurrentCulture))
                 {
 					currentIndex++;
-					
-					continue;
                 }
                 else if (instruction.StartsWith("acc", StringComparison.CurrentCulture))
                 {
@@ -49,6 +36,66 @@ namespace advent
 				}
             }
         }
+		
+		public static void Challenge2()
+		{
+			int currentIndex = 0;
+			int accumulator = 0;
+			int lastSwitched = 0;
+			List<int> visitedInicies = new List<int>();
+
+			while (currentIndex < input.Count)
+			{
+				currentIndex = 0;
+				accumulator = 0;
+				visitedInicies.Clear();
+				string originalRule = input.Skip(lastSwitched+1).FirstOrDefault(x => x.StartsWith("jmp") || x.StartsWith("nop"));
+				lastSwitched = input.IndexOf(originalRule, lastSwitched);
+
+                if (originalRule.StartsWith("jmp"))
+                {
+					input[lastSwitched] = originalRule.Replace("jmp", "nop");
+                }
+                else
+                {
+					input[lastSwitched] = originalRule.Replace("nop", "jmp");
+				}
+
+				while (!visitedInicies.Contains(currentIndex) && currentIndex < input.Count)
+				{
+					string instruction = input[currentIndex];
+					visitedInicies.Add(currentIndex);
+
+					if (instruction.StartsWith("nop", StringComparison.CurrentCulture))
+					{
+						currentIndex++;
+					}
+					else if (instruction.StartsWith("acc", StringComparison.CurrentCulture))
+					{
+						int value = int.Parse(Regex.Match(instruction, @"-?\d+$").Value);
+						currentIndex++;
+						accumulator += value;
+					}
+					else
+					{
+						int value = int.Parse(Regex.Match(instruction, @"-?\d+$").Value);
+						currentIndex += value;
+					}
+				}
+
+                if (currentIndex <= input.Count)
+				{
+					if (originalRule.StartsWith("jmp"))
+					{
+						input[lastSwitched] = originalRule.Replace("nop", "jmp");
+					}
+					else
+					{
+						input[lastSwitched] = originalRule.Replace("jmp", "nop");
+					}
+				}
+			}
+		}
 
 		public static List<string> input = new List<string>()
 		{
