@@ -5,7 +5,7 @@ namespace advent
 {
     public static class Day9
     {
-        public static void Challenge1()
+        public static long Challenge1()
         {
             int preambleLength = 25;
             for (int i = preambleLength; i < input.Count; i++)
@@ -22,11 +22,37 @@ namespace advent
                 }
                 if (!contains)
                 {
-                    long answer = input[i];
+                    return input[i];
+                }
+            }
+            return -1;
+        }
+
+        public static void Challenge2() 
+        {
+            long key = Challenge1();
+
+            List<long> keyPieces = new List<long>();
+            int takeCount = 1;
+            for (int i = 0; i < input.Count; i++)
+            {
+                keyPieces.Clear();
+                takeCount = 1;
+                while (keyPieces.Sum() < key)
+                {
+                    keyPieces = input.Skip(i).Take(takeCount).ToList();
+
+                    if (keyPieces.Sum() == key)
+                    {
+                        var weakness = keyPieces.Min() + keyPieces.Max(); 
+                    }
+                    else if (keyPieces.Sum() < key)
+                    {
+                        takeCount++;
+                    }
                 }
             }
         }
-
 
         public static List<long> input = new List<long>()
         {
